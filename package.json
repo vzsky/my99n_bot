@@ -6,6 +6,17 @@
   "author": "my99n",
   "license": "MIT",
   "dependencies": {
+    "cf-api-wrapper": "^1.0.2",
+    "comma-number": "^2.0.1",
+    "dotenv": "^8.2.0",
+    "novelcovid": "^1.1.2",
     "telegraf": "^3.37.0"
+  },
+  "scripts": {
+    "start": "nodemon",
+    "dev": "nodemon src/index.js"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.2"
   }
 }
