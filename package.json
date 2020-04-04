@@ -6,7 +6,6 @@
   "author": "my99n",
   "license": "MIT",
   "dependencies": {
-    "cf-api-wrapper": "^1.0.2",
     "comma-number": "^2.0.1",
     "dotenv": "^8.2.0",
     "novelcovid": "^1.1.2",
