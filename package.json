@@ -1,0 +1,11 @@
+{
+  "name": "my99_bot",
+  "version": "1.0.0",
+  "description": "telegram bot of my99n",
+  "main": "index.js",
+  "author": "my99n",
+  "license": "MIT",
+  "dependencies": {
+    "telegraf": "^3.37.0"
+  }
+}
