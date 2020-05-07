@@ -1,16 +1,20 @@
 const Telegraf = require('telegraf')
-const config = require('./utils')
-const covid = require('./covid_router')
-// const codeforces = require('./codeforces_router')
+const mongoose = require('mongoose')
 require('dotenv').config()
+
+const useMain = require('./main')
+const useReminder = require('./reminder')
 
 const bot = new Telegraf(process.env.TOKEN)
 
-config(bot)
+mongoose
+  .connect(process.env.MONGO, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
+  .then(() => console.log('connected to mongodb'))
 
-bot.on('sticker', (ctx) => console.log(ctx.message))
-
-covid(bot)
-// codeforces(bot)
+useMain(bot)
+useReminder(bot)
 
 bot.launch()

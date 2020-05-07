@@ -8,11 +8,12 @@
   "dependencies": {
     "comma-number": "^2.0.1",
     "dotenv": "^8.2.0",
+    "mongoose": "^5.9.12",
     "novelcovid": "^1.1.2",
     "telegraf": "^3.37.0"
   },
   "scripts": {
-    "start": "nodemon",
+    "start": "node src/index.js",
     "dev": "nodemon src/index.js"
   },
   "devDependencies": {
