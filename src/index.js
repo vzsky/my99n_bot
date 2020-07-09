@@ -4,6 +4,7 @@ require('dotenv').config()
 
 const useMain = require('./main')
 const useReminder = require('./reminder')
+const useFood = require('./food')
 
 const bot = new Telegraf(process.env.TOKEN)
 
@@ -16,5 +17,6 @@ mongoose
 
 useMain(bot)
 useReminder(bot)
+useFood(bot)
 
 bot.launch()
