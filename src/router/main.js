@@ -1,5 +1,5 @@
-const { cherryBounce, gooseShock } = require('./sticker')
-const { messenger } = require('./utils')
+const { cherryBounce, gooseShock } = require('../sticker')
+const { messenger } = require('../utils')
 
 const welcome = messenger(() => cherryBounce)
 const help = messenger(() => gooseShock)

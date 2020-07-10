@@ -1,6 +1,6 @@
-const { getapi, messenger, stamper, stampMaker } = require('./utils')
+const { getapi, messenger, stamper, stampMaker } = require('../utils')
 const moment = require('moment')
-const { porgWhat } = require('./sticker')
+const { porgWhat } = require('../sticker')
 
 const api = 'https://food-fetcher-bot.herokuapp.com/api/'
 

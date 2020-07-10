@@ -1,6 +1,6 @@
-const { User } = require('./model')
-const { porgWhat, cherryWink } = require('./sticker')
-const { messenger, stampMaker } = require('./utils')
+const { User } = require('../model')
+const { porgWhat, cherryWink } = require('../sticker')
+const { messenger, stampMaker } = require('../utils')
 
 const text = stampMaker('md')
 
