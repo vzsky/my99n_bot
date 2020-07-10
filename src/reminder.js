@@ -1,29 +1,31 @@
 const { User } = require('./model')
 const { porgWhat, cherryWink } = require('./sticker')
+const { messenger, stampMaker } = require('./utils')
 
-const list = async (ctx) => {
+const text = stampMaker('md')
+
+const list = messenger(async (ctx) => {
   let user = await User.findOne({ userid: ctx.update.message.from.id })
   if (!user || !user.reminder || !user.reminder.length) {
-    return ctx.reply("*Don't forget to be happy*", { parse_mode: 'Markdown' })
+    return text("*Don't forget to be happy*")
   }
   var msg = '*Keep in mind!*\n'
   for (let todo of user.reminder) {
     msg += `- ${todo}\n`
   }
-  return ctx.reply(msg, { parse_mode: 'Markdown' })
-}
+  return text(msg)
+})
 
-const done = async (ctx) => {
+const done = messenger(async (ctx) => {
   let msg = ctx.update.message
   let which = msg.text.slice(6) // length of '/done '
-  if (!which) return ctx.replyWithSticker(porgWhat)
+  if (!which) return porgWhat
 
   let user = await User.findOne({ userid: msg.from.id })
-  if (!user) return ctx.replyWithSticker(cherryWink)
+  if (!user) return cherryWink
   if (which == 'all') user.reminder = []
   else {
     which = parseInt(which) - 1
-    console.log(which)
     user.reminder.splice(which, 1)
   }
   await User.updateOne(
@@ -31,13 +33,13 @@ const done = async (ctx) => {
     { reminder: user.reminder },
     { upsert: true }
   )
-  return ctx.replyWithSticker(cherryWink)
-}
+  return cherryWink
+})
 
-const remind = async (ctx) => {
+const remind = messenger(async (ctx) => {
   let msg = ctx.update.message
   let todo = msg.text.slice(8) // length of '/remind '
-  if (!todo) return ctx.replyWithSticker(porgWhat)
+  if (!todo) return porgWhat
 
   let user = await User.findOne({ userid: msg.from.id })
   if (!user) user = { reminder: [] }
@@ -46,8 +48,8 @@ const remind = async (ctx) => {
     { reminder: [...user.reminder, todo] },
     { upsert: true }
   )
-  return ctx.replyWithSticker(cherryWink)
-}
+  return cherryWink
+})
 
 module.exports = (bot) => {
   bot.command('remind', async (ctx) => remind(ctx))

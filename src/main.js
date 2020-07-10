@@ -1,11 +1,8 @@
 const { cherryBounce, gooseShock } = require('./sticker')
-const welcome = async (ctx) => {
-  ctx.replyWithSticker(cherryBounce)
-}
+const { messenger } = require('./utils')
 
-const help = async (ctx) => {
-  ctx.replyWithSticker(gooseShock)
-}
+const welcome = messenger(() => cherryBounce)
+const help = messenger(() => gooseShock)
 
 const onSticker = (ctx) => {
   console.log(

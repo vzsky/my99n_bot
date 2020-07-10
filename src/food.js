@@ -1,16 +1,8 @@
-const { getapi, messenger } = require('./utils')
+const { getapi, messenger, stamper, stampMaker } = require('./utils')
 const moment = require('moment')
 const { porgWhat } = require('./sticker')
 
 const api = 'https://food-fetcher-bot.herokuapp.com/api/'
-
-const getDate = () => {
-  return moment().utcOffset(7)
-}
-
-const getTime = () => {
-  return moment().utcOffset(7).hour()
-}
 
 const timeToEat = {
   Breakfast: 9,
@@ -18,8 +10,13 @@ const timeToEat = {
   Dinner: 20,
 }
 
+const text = stampMaker('md')
+
+const getDate = () => moment().utcOffset(7)
+const getTime = () => moment().utcOffset(7).hour()
+
 const addToMenu = (dishes, type) => {
-  s = type + '\n'
+  s = +type + '\n'
   for (dish of dishes) {
     s += '- ' + dish + '\n'
   }
@@ -29,11 +26,11 @@ const addToMenu = (dishes, type) => {
 
 const menuWriter = async (date, periods) => {
   let res = await getapi(api + date.format('M-D-YYYY'))
-  let s = 'Menu for ' + date.format('dddd') + '\n\n'
+  let s = '*Menu for ' + date.format('dddd') + '*\n\n'
   for (period of periods) {
     s += addToMenu(res[period], period)
   }
-  return s
+  return text(s)
 }
 
 const menu = messenger(async () => {
@@ -66,21 +63,6 @@ const breakfast = meal('Breakfast')
 const lunch = meal('Lunch')
 const dinner = meal('Dinner')
 
-// let helpcmd = {
-//   type: 'subcommands',
-//   headers: ['food command', 'USAGE : food [subcommand]'],
-//   commands: [
-//     { usage: 'menu', desc: "show today's menu" },
-//     { usage: 'tomorrow', desc: "show tommorow's menu" },
-//     { usage: 'breakfast', desc: 'show next breakfast' },
-//     { usage: 'lunch', desc: 'show next lunch' },
-//     { usage: 'dinner', desc: 'show next dinner' },
-//     { usage: 'next', desc: 'show next meal' },
-//   ],
-// }
-
-// const help = messenger(() => helperMessage(helpcmd))
-
 const foodCommand = {
   menu,
   breakfast,
@@ -88,7 +70,6 @@ const foodCommand = {
   dinner,
   tomorrow,
   next,
-  // help,
 }
 
 const food = async (ctx) => {

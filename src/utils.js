@@ -13,8 +13,16 @@ const getapi = async (path) => {
 const messenger = (func) => {
   return async (ctx) => {
     let reply = await func(ctx)
-    ctx.reply(reply, { parse_mode: 'Markdown' })
+    if (reply.stamp === 'text') ctx.reply(reply.val)
+    if (reply.stamp === 'md') ctx.reply(reply.val, { parse_mode: 'Markdown' })
+    if (reply.stamp === 'sticker') ctx.replyWithSticker(reply.val)
   }
 }
 
-module.exports = { getapi, messenger }
+const stampMaker = (stamp) => {
+  return (val) => {
+    return { stamp, val }
+  }
+}
+
+module.exports = { getapi, messenger, stampMaker }
