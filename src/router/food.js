@@ -16,7 +16,7 @@ const getDate = () => moment().utcOffset(7)
 const getTime = () => moment().utcOffset(7).hour()
 
 const addToMenu = (dishes, type) => {
-  s = +type + '\n'
+  s = type + '\n'
   for (dish of dishes) {
     s += '- ' + dish + '\n'
   }
