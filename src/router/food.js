@@ -26,6 +26,7 @@ const addToMenu = (dishes, type) => {
 
 const menuWriter = async (date, periods) => {
   let res = await getapi(api + date.format('M-D-YYYY'))
+  if (!res) return text('Api down')
   let s = '*Menu for ' + date.format('dddd') + '*\n\n'
   for (period of periods) {
     s += addToMenu(res[period], period)
@@ -75,7 +76,7 @@ const foodCommand = {
 const food = async (ctx) => {
   let msg = ctx.update.message
   let cmd = msg.text.slice(6) // length of '/food '
-  if (foodCommand[cmd] == null) return ctx.replyWithSticker(porgWhat)
+  if (foodCommand[cmd] == null) return ctx.replyWithSticker(porgWhat.val)
   foodCommand[cmd](ctx)
 }
 
