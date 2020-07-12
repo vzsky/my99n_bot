@@ -51,8 +51,10 @@ const remind = messenger(async (ctx) => {
   return cherryWink
 })
 
-module.exports = (bot) => {
-  bot.command('remind', async (ctx) => remind(ctx))
-  bot.command('list', async (ctx) => list(ctx))
-  bot.command('done', async (ctx) => done(ctx))
+module.exports = {
+  main: (bot) => {
+    bot.command('remind', async (ctx) => remind(ctx))
+    bot.command('list', async (ctx) => list(ctx))
+    bot.command('done', async (ctx) => done(ctx))
+  },
 }

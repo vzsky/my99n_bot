@@ -5,4 +5,9 @@ const User = mongoose.model('user', {
   reminder: [String],
 })
 
-module.exports = { User }
+const Subscription = mongoose.model('subscription', {
+  name: String,
+  userids: [String],
+})
+
+module.exports = { User, Subscription }

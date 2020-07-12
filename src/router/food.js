@@ -31,24 +31,24 @@ const menuWriter = async (date, periods) => {
   for (period of periods) {
     s += addToMenu(res[period], period)
   }
-  return text(s)
+  return s
 }
 
 const menu = messenger(async () => {
   let date = getDate()
-  return await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner'])
+  return await text(menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
 })
 
 const tomorrow = messenger(async () => {
   let date = getDate().add(1, 'd')
-  return await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner'])
+  return await text(menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
 })
 
 const meal = (period) => {
   return messenger(async () => {
     let date = getDate()
     if (getTime() >= timeToEat[period]) date = date.add(1, 'd')
-    return await menuWriter(date, [period])
+    return await text(menuWriter(date, [period]))
   })
 }
 
@@ -57,7 +57,7 @@ const next = messenger(async () => {
   for (period of ['Breakfast', 'Lunch', 'Dinner']) {
     if (getTime() < timeToEat[period]) return await menuWriter(date, [period])
   }
-  return await menuWriter(date.add(1, 'd'), ['Breakfast'])
+  return await text(menuWriter(date.add(1, 'd'), ['Breakfast']))
 })
 
 const breakfast = meal('Breakfast')
@@ -80,6 +80,10 @@ const food = async (ctx) => {
   foodCommand[cmd](ctx)
 }
 
-module.exports = (bot) => {
-  bot.command('food', async (ctx) => food(ctx))
+module.exports = {
+  main: (bot) => {
+    bot.command('food', async (ctx) => food(ctx))
+  },
+  menuWriter,
+  getDate,
 }

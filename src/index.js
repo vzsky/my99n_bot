@@ -2,9 +2,10 @@ const Telegraf = require('telegraf')
 const mongoose = require('mongoose')
 require('dotenv').config()
 
-const useMain = require('./router/main')
-const useReminder = require('./router/reminder')
-const useFood = require('./router/food')
+const useMain = require('./router/main').main
+const useReminder = require('./router/reminder').main
+const useFood = require('./router/food').main
+const useAutoFood = require('./router/auto-food').main
 
 const bot = new Telegraf(process.env.TOKEN)
 
@@ -18,5 +19,6 @@ mongoose
 useMain(bot)
 useReminder(bot)
 useFood(bot)
+useAutoFood(bot)
 
 bot.launch()

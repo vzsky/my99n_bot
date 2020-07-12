@@ -13,8 +13,10 @@ const onSticker = (ctx) => {
   )
 }
 
-module.exports = (bot) => {
-  bot.start(async (ctx) => welcome(ctx))
-  bot.help(async (ctx) => help(ctx))
-  bot.on('sticker', (ctx) => onSticker(ctx))
+module.exports = {
+  main: (bot) => {
+    bot.start(async (ctx) => welcome(ctx))
+    bot.help(async (ctx) => help(ctx))
+    bot.on('sticker', (ctx) => onSticker(ctx))
+  },
 }
