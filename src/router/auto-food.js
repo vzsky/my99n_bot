@@ -32,10 +32,6 @@ const botSendMenu = (bot) => {
 module.exports = {
   main: (bot) => {
     bot.hears('AutoFood', Subcribe)
-    schedule.scheduleJob('6 * * *', botSendMenu(bot))
-    // schedule.scheduleJob('1 * * * * *', botSendMenu(bot))
-    schedule.scheduleJob('0 * * * * *', (time) => {
-      console.log(time)
-    })
+    schedule.scheduleJob('23 * * *', botSendMenu(bot)) // UTC
   },
 }
