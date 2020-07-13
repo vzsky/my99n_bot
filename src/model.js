@@ -7,7 +7,7 @@ const User = mongoose.model('user', {
 
 const Subscription = mongoose.model('subscription', {
   name: String,
-  userids: [String],
+  userids: [Object],
 })
 
 module.exports = { User, Subscription }
