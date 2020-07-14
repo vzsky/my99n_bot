@@ -38,7 +38,9 @@ const SendMenu = async (bot) => {
     let date = getDate()
     let msg = await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner'])
 
-    if (user.last != null) await bot.telegram.deleteMessage(user.id, user.last)
+    try {
+      await bot.telegram.deleteMessage(user.id, user.last)
+    } catch (e) {}
 
     let sent = await bot.telegram.sendMessage(user.id, msg, {
       parse_mode: 'Markdown',
@@ -56,7 +58,5 @@ module.exports = {
   main: (bot) => {
     bot.hears('AutoFood', Subcribe)
     schedule.scheduleJob('0 0 23 * * *', botSendMenu(bot)) // UTC
-    // schedule.scheduleJob('0 * * * * *', botSendMenu(bot)) // test
-    // schedule.scheduleJob('30 * * * * *', botSendMenu(bot)) // test
   },
 }
