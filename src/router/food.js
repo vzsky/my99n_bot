@@ -36,19 +36,19 @@ const menuWriter = async (date, periods) => {
 
 const menu = messenger(async () => {
   let date = getDate()
-  return await text(menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
+  return text(await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
 })
 
 const tomorrow = messenger(async () => {
   let date = getDate().add(1, 'd')
-  return await text(menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
+  return text(await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
 })
 
 const meal = (period) => {
   return messenger(async () => {
     let date = getDate()
     if (getTime() >= timeToEat[period]) date = date.add(1, 'd')
-    return await text(menuWriter(date, [period]))
+    return text(await menuWriter(date, [period]))
   })
 }
 
@@ -57,12 +57,16 @@ const next = messenger(async () => {
   for (period of ['Breakfast', 'Lunch', 'Dinner']) {
     if (getTime() < timeToEat[period]) return await menuWriter(date, [period])
   }
-  return await text(menuWriter(date.add(1, 'd'), ['Breakfast']))
+  return text(await menuWriter(date.add(1, 'd'), ['Breakfast']))
 })
 
 const breakfast = meal('Breakfast')
 const lunch = meal('Lunch')
 const dinner = meal('Dinner')
+
+const help = messenger(async () => {
+  return text('subcommands are menu, breakfast, lunch, dinner, tommorrow, next')
+})
 
 const foodCommand = {
   menu,
@@ -71,6 +75,7 @@ const foodCommand = {
   dinner,
   tomorrow,
   next,
+  help,
 }
 
 const food = async (ctx) => {
