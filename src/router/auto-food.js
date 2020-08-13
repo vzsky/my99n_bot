@@ -1,6 +1,7 @@
 const { Subscription } = require('../model')
 const schedule = require('node-schedule')
 const { menuWriter, getDate } = require('./food')
+const { messenger, stampMaker } = require('../utils')
 
 const query = async () => {
   let res = await Subscription.findOne({ name: 'AutoFood' })
@@ -24,39 +25,34 @@ const Subcribe = async (ctx) => {
     return obj.id === id
   })
 
-  if (find == null || find.length == 0)
-    res.userids = [...res.userids, { id, last: null }]
+  if (find == null || find.length == 0) res.userids = [...res.userids, id]
 
   await update(res.userids)
 }
 
-const SendMenu = async (bot) => {
+const SendMenu = messenger(async () => {
   let res = await query()
-
+  let sending = []
   for (ind in res.userids) {
     let user = res.userids[ind]
     let date = getDate()
     let msg = await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner'])
 
-    try {
-      await bot.telegram.deleteMessage(user.id, user.last)
-    } catch (e) {}
-
-    let sent = await bot.telegram.sendMessage(user.id, msg, {
-      parse_mode: 'Markdown',
+    let stamp = stampMaker({
+      deleteWhen: 'menu',
+      type: 'sendTo',
+      id: user,
+      option: { parse_mode: 'Markdown' },
     })
-
-    res.userids[ind] = { id: user.id, last: sent.message_id }
+    sending.push(stamp(msg))
   }
-
-  await update(res.userids)
-}
-
-const botSendMenu = (bot) => () => SendMenu(bot)
+  return sending
+})
 
 module.exports = {
   main: (bot) => {
     bot.hears('AutoFood', Subcribe)
-    schedule.scheduleJob('0 0 14 * * *', botSendMenu(bot)) // UTC
+    schedule.scheduleJob('0 0 14 * * *', SendMenu) // UTC
+    // bot.hears('test', SendMenu)
   },
 }

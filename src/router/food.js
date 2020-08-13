@@ -1,4 +1,4 @@
-const { getapi, messenger, stamper, stampMaker } = require('../utils')
+const { getapi, messenger, stampMaker, commandRemover } = require('../utils')
 const moment = require('moment')
 const { porgWhat } = require('../sticker')
 
@@ -10,7 +10,7 @@ const timeToEat = {
   Dinner: 20,
 }
 
-const text = stampMaker('md')
+const text = stampMaker({ type: 'md', kind: 'food', deleteWhen: 'menu' })
 
 const getDate = () => moment().utcOffset(7)
 const getTime = () => moment().utcOffset(7).hour()
@@ -82,12 +82,12 @@ const food = async (ctx) => {
   let msg = ctx.update.message
   let cmd = msg.text.slice(6) // length of '/food '
   if (foodCommand[cmd] == null) return ctx.replyWithSticker(porgWhat.val)
-  foodCommand[cmd](ctx)
+  await foodCommand[cmd](ctx)
 }
 
 module.exports = {
   main: (bot) => {
-    bot.command('food', async (ctx) => food(ctx))
+    bot.command('food', async (ctx) => commandRemover(ctx, food))
   },
   menuWriter,
   getDate,
