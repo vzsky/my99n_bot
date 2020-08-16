@@ -1,8 +1,8 @@
 const { cherryBounce, gooseShock } = require('../sticker')
-const { messenger } = require('../utils')
+const { replyer } = require('../utils')
 
-const welcome = messenger(() => cherryBounce)
-const help = messenger(() => gooseShock)
+const welcome = replyer(() => cherryBounce)
+const help = replyer(() => gooseShock)
 
 const onSticker = (ctx) => {
   console.log(

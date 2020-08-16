@@ -1,6 +1,6 @@
-const { getapi, messenger, stampMaker, commandRemover } = require('../utils')
+const { getapi, replyer, stampMaker, removeAndRun } = require('../utils')
 const moment = require('moment')
-const { porgWhat } = require('../sticker')
+const { porgWhat, stickerSender } = require('../sticker')
 
 const api = 'https://food-fetcher-bot.herokuapp.com/api/'
 
@@ -34,25 +34,25 @@ const menuWriter = async (date, periods) => {
   return s
 }
 
-const menu = messenger(async () => {
+const menu = replyer(async () => {
   let date = getDate()
   return text(await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
 })
 
-const tomorrow = messenger(async () => {
+const tomorrow = replyer(async () => {
   let date = getDate().add(1, 'd')
   return text(await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner']))
 })
 
 const meal = (period) => {
-  return messenger(async () => {
+  return replyer(async () => {
     let date = getDate()
     if (getTime() >= timeToEat[period]) date = date.add(1, 'd')
     return text(await menuWriter(date, [period]))
   })
 }
 
-const next = messenger(async () => {
+const next = replyer(async () => {
   let date = getDate()
   for (period of ['Breakfast', 'Lunch', 'Dinner']) {
     if (getTime() < timeToEat[period]) return await menuWriter(date, [period])
@@ -64,7 +64,7 @@ const breakfast = meal('Breakfast')
 const lunch = meal('Lunch')
 const dinner = meal('Dinner')
 
-const help = messenger(async () => {
+const help = replyer(async () => {
   return text('subcommands are menu, breakfast, lunch, dinner, tommorrow, next')
 })
 
@@ -81,13 +81,13 @@ const foodCommand = {
 const food = async (ctx) => {
   let msg = ctx.update.message
   let cmd = msg.text.slice(6) // length of '/food '
-  if (foodCommand[cmd] == null) return ctx.replyWithSticker(porgWhat.val)
+  if (foodCommand[cmd] == null) return stickerSender(porgWhat)(ctx)
   await foodCommand[cmd](ctx)
 }
 
 module.exports = {
   main: (bot) => {
-    bot.command('food', async (ctx) => commandRemover(ctx, food))
+    bot.command('food', async (ctx) => removeAndRun(ctx, food))
   },
   menuWriter,
   getDate,

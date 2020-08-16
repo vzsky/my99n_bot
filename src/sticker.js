@@ -1,10 +1,11 @@
-const { stampMaker } = require('./utils')
+const { stampMaker, replyer } = require('./utils')
 const sticker = stampMaker({
   type: 'sticker',
   deleteWhen: 'sticker',
 })
 
 module.exports = {
+  stickerSender: (st) => replyer(() => st),
   cherryBounce: sticker(
     'CAACAgIAAxkBAANKXogv4knCS-h3ljVtVbQz5X0iRP8AAgUAA8A2TxP5al-agmtNdRgE'
   ),

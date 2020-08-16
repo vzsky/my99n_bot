@@ -1,11 +1,11 @@
 const { User } = require('../model')
 const { porgWhat, cherryWink } = require('../sticker')
-const { messenger, stampMaker, commandRemover } = require('../utils')
+const { replyer, stampMaker, removeAndRun } = require('../utils')
 
 const text = stampMaker({ type: 'md', kind: 'remind', deleteWhen: 'remind' })
 
-const list = messenger(async (ctx) => {
-  let user = await User.findOne({ userid: ctx.update.message.from.id })
+const fetchList = async (userid) => {
+  let user = await User.findOne({ userid })
   if (!user || !user.reminder || !user.reminder.length) {
     return text("*Don't forget to be happy*")
   }
@@ -14,9 +14,13 @@ const list = messenger(async (ctx) => {
     msg += `- ${todo}\n`
   }
   return text(msg)
+}
+
+const list = replyer(async (ctx) => {
+  return await fetchList(ctx.update.message.from.id)
 })
 
-const done = messenger(async (ctx) => {
+const done = replyer(async (ctx) => {
   let msg = ctx.update.message
   let which = msg.text.slice(6) // length of '/done '
   if (!which) return porgWhat
@@ -28,11 +32,11 @@ const done = messenger(async (ctx) => {
     which = parseInt(which) - 1
     user.reminder.splice(which, 1)
   }
-  await User.updateOne({ userid: msg.chat.id }, user, { upsert: true })
-  return cherryWink
+  await User.updateOne({ userid: user.userid }, user, { upsert: true })
+  return await fetchList(user.userid)
 })
 
-const remind = messenger(async (ctx) => {
+const remind = replyer(async (ctx) => {
   let msg = ctx.update.message
   let todo = msg.text.slice(8) // length of '/remind '
   if (!todo) return porgWhat
@@ -41,14 +45,14 @@ const remind = messenger(async (ctx) => {
   if (!user) user = { reminder: [] }
   if (!user.reminder) user.reminder = []
   user.reminder = [...user.reminder, todo]
-  await User.updateOne({ userid: msg.chat.id }, user, { upsert: true })
-  return cherryWink
+  await User.updateOne({ userid: user.userid }, user, { upsert: true })
+  return await fetchList(user.userid)
 })
 
 module.exports = {
   main: (bot) => {
-    bot.command('remind', async (ctx) => commandRemover(ctx, remind))
-    bot.command('list', async (ctx) => commandRemover(ctx, list))
-    bot.command('done', async (ctx) => commandRemover(ctx, done))
+    bot.command('remind', async (ctx) => removeAndRun(ctx, remind))
+    bot.command('list', async (ctx) => removeAndRun(ctx, list))
+    bot.command('done', async (ctx) => removeAndRun(ctx, done))
   },
 }

@@ -1,7 +1,7 @@
 const { Subscription } = require('../model')
 const schedule = require('node-schedule')
 const { menuWriter, getDate } = require('./food')
-const { messenger, stampMaker } = require('../utils')
+const { boardcast, stampMaker } = require('../utils')
 
 const query = async () => {
   let res = await Subscription.findOne({ name: 'AutoFood' })
@@ -30,7 +30,7 @@ const Subcribe = async (ctx) => {
   await update(res.userids)
 }
 
-const SendMenu = messenger(async () => {
+const SendMenu = boardcast(async () => {
   let res = await query()
   let sending = []
   for (ind in res.userids) {
@@ -40,8 +40,7 @@ const SendMenu = messenger(async () => {
 
     let stamp = stampMaker({
       deleteWhen: 'menu',
-      type: 'sendTo',
-      id: user,
+      to: user,
       option: { parse_mode: 'Markdown' },
     })
     sending.push(stamp(msg))
@@ -52,7 +51,8 @@ const SendMenu = messenger(async () => {
 module.exports = {
   main: (bot) => {
     bot.hears('AutoFood', Subcribe)
-    schedule.scheduleJob('0 0 14 * * *', SendMenu) // UTC
-    // bot.hears('test', SendMenu)
+    schedule.scheduleJob('1 0 17 * * *', () => SendMenu(bot)) // UTC
+    // schedule.scheduleJob('30 * * * * *', () => SendMenu(bot)) // UTC
+    // bot.hears('test', () => SendMenu(bot))
   },
 }
