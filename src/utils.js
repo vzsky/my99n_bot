@@ -59,7 +59,11 @@ const replyStampHandler = async (ctx, rep) => {
   }
 
   if (s.type === 'md') {
-    return await ctx.reply(rep.val, { parse_mode: 'Markdown' })
+	try {    
+		return await ctx.reply(rep.val, { parse_mode: 'Markdown' })
+	} catch (e) {
+		return await ctx.reply(rep.val)
+	}
   }
 
   if (s.type === 'sticker') {
