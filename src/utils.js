@@ -59,11 +59,11 @@ const replyStampHandler = async (ctx, rep) => {
   }
 
   if (s.type === 'md') {
-	try {    
-		return await ctx.reply(rep.val, { parse_mode: 'Markdown' })
-	} catch (e) {
-		return await ctx.reply(rep.val)
-	}
+    try {
+      return await ctx.reply(rep.val, { parse_mode: 'Markdown' })
+    } catch (e) {
+      return await ctx.reply(rep.val)
+    }
   }
 
   if (s.type === 'sticker') {
@@ -86,7 +86,9 @@ const replyer = (func) => {
     user.events[del] = []
     user.events[del].push(msg.message_id)
 
-    await User.updateOne({ userid: user.userid }, user, { upsert: true })
+    await User.updateOne({ userid: user.userid }, user, {
+      upsert: true,
+    })
   }
 }
 
