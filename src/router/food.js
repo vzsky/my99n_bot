@@ -9,11 +9,16 @@ const timeToEat = {
   Lunch: 13,
   Dinner: 20,
 }
+lastMealDaily = 'Dinner'
 
 const text = stampMaker({ type: 'md', kind: 'food', deleteWhen: 'menu' })
 
 const getDate = () => moment().utcOffset(7)
 const getTime = () => moment().utcOffset(7).hour()
+const getDateOfNextMeal = () => {
+  if (timeToEat[lastMealDaily] < getTime()) return getDate().add(1, 'd')
+  return getDate()
+}
 
 const addToMenu = (dishes, type) => {
   s = type + '\n'
@@ -90,5 +95,5 @@ module.exports = {
     bot.command('food', async (ctx) => removeAndRun(ctx, food))
   },
   menuWriter,
-  getDate,
+  getDateOfNextMeal
 }

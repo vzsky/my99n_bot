@@ -1,6 +1,6 @@
 const { Subscription } = require('../model')
 const schedule = require('node-schedule')
-const { menuWriter, getDate } = require('./food')
+const { menuWriter, getDateOfNextMeal } = require('./food')
 const { boardcast, stampMaker, TesterList } = require('../utils')
 
 const AutoFoodSubscribers = async () => {
@@ -35,7 +35,7 @@ const SendMenu = boardcast(async () => {
   let sending = []
   for (ind in res.userids) {
     let user = res.userids[ind]
-    let date = getDate()
+    let date = getDateOfNextMeal()
     let msg = await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner'])
 
     let stamp = stampMaker({
@@ -53,7 +53,7 @@ const SendTestMenu = boardcast(async () => {
   let sending = []
   for (ind in res.userids) {
     let user = res.userids[ind]
-    let date = getDate()
+    let date = getDateOfNextMeal()
     let msg = await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner'])
 
     let stamp = stampMaker({
@@ -61,7 +61,7 @@ const SendTestMenu = boardcast(async () => {
       to: user,
       option: { parse_mode: 'Markdown' },
     })
-    sending.push(stamp("This is a test message. No one should see this.  "+msg))
+    sending.push(stamp(msg))
   }
   return sending
 })
@@ -69,8 +69,8 @@ const SendTestMenu = boardcast(async () => {
 module.exports = {
   main: (bot) => {
     bot.hears('AutoFood', Subcribe)
-    schedule.scheduleJob('1 0 17 * * *', () => SendMenu(bot)) // UTC
+    schedule.scheduleJob('1 0 14 * * *', () => SendMenu(bot)) // UTC
     // schedule.scheduleJob('30 * * * * *', () => SendMenu(bot)) // UTC
-    bot.hears('test', () => SendTestMenu(bot))
+    // bot.hears('test', () => SendTestMenu(bot))
   },
 }
