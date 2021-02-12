@@ -1,9 +1,9 @@
 const { Subscription } = require('../model')
 const schedule = require('node-schedule')
 const { menuWriter, getDate } = require('./food')
-const { boardcast, stampMaker } = require('../utils')
+const { boardcast, stampMaker, TesterList } = require('../utils')
 
-const query = async () => {
+const AutoFoodSubscribers = async () => {
   let res = await Subscription.findOne({ name: 'AutoFood' })
   if (!res) res = { userids: [] }
   return res
@@ -19,7 +19,7 @@ const update = async (userids) => {
 
 const Subcribe = async (ctx) => {
   let id = ctx.message.chat.id.toString()
-  let res = await query()
+  let res = await AutoFoodSubscribers()
 
   let find = res.userids.filter((obj) => {
     return obj.id === id
@@ -31,7 +31,7 @@ const Subcribe = async (ctx) => {
 }
 
 const SendMenu = boardcast(async () => {
-  let res = await query()
+  let res = await AutoFoodSubscribers()
   let sending = []
   for (ind in res.userids) {
     let user = res.userids[ind]
@@ -48,11 +48,29 @@ const SendMenu = boardcast(async () => {
   return sending
 })
 
+const SendTestMenu = boardcast(async () => {
+  let res = await TesterList()
+  let sending = []
+  for (ind in res.userids) {
+    let user = res.userids[ind]
+    let date = getDate()
+    let msg = await menuWriter(date, ['Breakfast', 'Lunch', 'Dinner'])
+
+    let stamp = stampMaker({
+      deleteWhen: 'menu',
+      to: user,
+      option: { parse_mode: 'Markdown' },
+    })
+    sending.push(stamp("This is a test message. No one should see this.  "+msg))
+  }
+  return sending
+})
+
 module.exports = {
   main: (bot) => {
     bot.hears('AutoFood', Subcribe)
     schedule.scheduleJob('1 0 17 * * *', () => SendMenu(bot)) // UTC
     // schedule.scheduleJob('30 * * * * *', () => SendMenu(bot)) // UTC
-    // bot.hears('test', () => SendMenu(bot))
+    bot.hears('test', () => SendTestMenu(bot))
   },
 }

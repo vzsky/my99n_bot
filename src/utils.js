@@ -1,5 +1,5 @@
 const fetch = require('node-fetch')
-const { User } = require('./model')
+const { User, Subscription } = require('./model')
 
 const getapi = async (path) => {
   try {
@@ -103,4 +103,10 @@ const removeAndRun = async (ctx, func) => {
   return await func(ctx)
 }
 
-module.exports = { getapi, replyer, boardcast, stampMaker, removeAndRun }
+const TesterList = async () => {
+  let res = await Subscription.findOne({ name: 'Tester' })
+  if (!res) res = { userids: [] }
+  return res
+}
+
+module.exports = { getapi, replyer, boardcast, stampMaker, removeAndRun, TesterList }
