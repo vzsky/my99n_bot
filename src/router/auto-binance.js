@@ -54,6 +54,5 @@ module.exports = {
     bot.hears('AutoBinance', Subcribe)
     schedule.scheduleJob('1 0 * * * *', () => SendUpdate(bot)) // UTC
     // schedule.scheduleJob('30 * * * * *', () => SendMenu(bot)) // UTC
-    // bot.hears('test', () => SendTestMenu(bot))
   },
 }
