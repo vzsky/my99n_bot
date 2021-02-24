@@ -51,7 +51,7 @@ const SendUpdate = boardcast(async () => {
 
 module.exports = {
   main: (bot) => {
-    bot.hears('AutoBinance', Subcribe)
+    // bot.hears('AutoBinance', Subcribe) Kinda private so no subscribe
     schedule.scheduleJob('1 0 * * * *', () => SendUpdate(bot)) // UTC
     // schedule.scheduleJob('30 * * * * *', () => SendMenu(bot)) // UTC
   },
