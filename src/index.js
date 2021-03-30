@@ -20,8 +20,8 @@ mongoose
 
 useMain(bot)
 useReminder(bot)
-useFood(bot)
-useAutoFood(bot)
+// useFood(bot)
+// useAutoFood(bot)
 useBinance(bot)
 useAutoBinance(bot)
 
