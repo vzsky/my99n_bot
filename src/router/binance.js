@@ -60,7 +60,7 @@ const addSymbol = async (ctx) => {
   let cmd = msg.text.split(' ')
   let sym = cmd[0].toUpperCase()+'USDT'
   let opr = cmd[1]
-  let prc = parseInt(cmd[2])
+  let prc = parseFloat(cmd[2])
 
   let treshold = await getTreshold()
 
