@@ -11,4 +11,9 @@ const Subscription = mongoose.model('subscription', {
   userids: [Object],
 })
 
-module.exports = { User, Subscription }
+const Binance = mongoose.model('binance', {
+  name: String,
+  object: Object
+})
+
+module.exports = { User, Subscription, Binance }
