@@ -1,5 +1,10 @@
 const WebSocket = require('ws')
 const { Binance } = require('../model')
+const BinanceAPI = require('node-binance-api');
+const axios = require('axios');
+const { replyer, stampMaker } = require('../utils');
+
+const text = stampMaker({ type: 'md', kind: 'binance', deleteWhen: 'binance' })
 
 let price = {}
 
@@ -58,9 +63,9 @@ const onMessage = async (bot) => {
 const addSymbol = async (ctx) => {
   let msg = ctx.update.message
   let cmd = msg.text.split(' ')
-  let sym = cmd[0].toUpperCase()+'USDT'
-  let opr = cmd[1]
-  let prc = parseFloat(cmd[2])
+  let sym = cmd[1].toUpperCase()+'USDT'
+  let opr = cmd[2]
+  let prc = parseFloat(cmd[3])
 
   let treshold = await getTreshold()
 
@@ -73,7 +78,7 @@ const addSymbol = async (ctx) => {
 
 module.exports = {
   main: (bot) => {
-    bot.on('text', async (ctx) => addSymbol(ctx))
     onMessage(bot);
+    bot.command('alert', async (ctx) => addSymbol(ctx))
   }
 }

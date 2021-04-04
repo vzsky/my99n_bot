@@ -6,6 +6,7 @@
   "author": "my99n",
   "license": "MIT",
   "dependencies": {
+    "axios": "^0.21.1",
     "binanceview": "^1.0.4",
     "comma-number": "^2.0.1",
     "dot-prop": "^5.2.0",
