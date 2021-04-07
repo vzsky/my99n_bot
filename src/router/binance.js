@@ -33,17 +33,21 @@ const useWebsocket = (bot) => {
     for (let symbol in treshold) {
       for (let index in treshold[symbol]) {
         let tres = treshold[symbol][index]
-        if (tres.opr == '<') {
+        if (tres.opr[0] == '<') {
           if (price[symbol] < tres.prc) {
-            bot.telegram.sendMessage(tres.user, `${symbol} @ ${price[symbol]}`)
+            let displayPrice = parseFloat(price[symbol])
+            if (tres.opr[1] == 'b') displayPrice = displayPrice*getBathPerDollar() + " THB"
+            bot.telegram.sendMessage(tres.user, `${symbol} @ ${displayPrice}`)
             treshold[symbol].splice(index, 1);
 
             await updateTreshold(treshold)
           }
         }
-        if (tres.opr == '>') {
+        if (tres.opr[0] == '>') {
           if (price[symbol] > tres.prc) {
-            bot.telegram.sendMessage(tres.user, `${symbol} @ ${price[symbol]}`)
+            let displayPrice = parseFloat(price[symbol])
+            if (tres.opr[1] == 'b') displayPrice = displayPrice*getBathPerDollar() + " THB"
+            bot.telegram.sendMessage(tres.user, `${symbol} @ ${displayPrice}`)
             treshold[symbol].splice(index, 1);
 
             await updateTreshold(treshold)
@@ -68,12 +72,21 @@ const verifyTreshold = (symbol, newTreshold) => {
   return flag;
 }
 
+const getBathPerDollar = () => {
+  return 30.0
+}
+
 const addSymbol = async (ctx) => {
   let msg = ctx.update.message
   let cmd = msg.text.split(' ')
   let sym = cmd[0].toUpperCase()
   let opr = cmd[1]
   let prc = parseFloat(cmd[2])
+  if (cmd[2][cmd[2].length - 1].toUpperCase() == 'B') {
+    let BathPerDollar = getBathPerDollar()
+    prc /= BathPerDollar
+    opr += 'b'
+  }
 
   let treshold = await getTreshold()
 
