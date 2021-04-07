@@ -1,10 +1,5 @@
 const WebSocket = require('ws')
 const { Binance } = require('../model')
-const BinanceAPI = require('node-binance-api');
-const axios = require('axios');
-const { replyer, stampMaker } = require('../utils');
-
-const text = stampMaker({ type: 'md', kind: 'binance', deleteWhen: 'binance' })
 
 let price = {}
 
@@ -22,12 +17,11 @@ const updateTreshold = async (object) => {
   )
 }
 
-let conn = new WebSocket("wss://stream.binance.com:9443/ws/!miniTicker@arr")
-conn.on('error', async (data) => {
-  console.log(data);
-});
-
-const onMessage = async (bot) => {
+const useWebsocket = (bot) => {
+  let conn = new WebSocket("wss://stream.binance.com:9443/ws/!miniTicker@arr")
+  conn.on('error', async (data) => {
+    console.log(data);
+  });
   conn.on('message', async (data) => {
     let d = JSON.parse(data)
     for (let symbol of d) {
@@ -58,19 +52,46 @@ const onMessage = async (bot) => {
       }
     }
   })
+  conn.on('close', () => {
+    setTimeout(function(){useWebsocket(bot)}, 10000);
+  })
+}
+
+const verifyTreshold = (symbol, newTreshold) => {
+  let {prc, opr, user} = newTreshold
+  if (prc == NaN || prc == null || opr == null || opr == NaN) return false;
+  let flag = false;
+  for (let s in price) {
+    if (symbol == s) flag = true;
+  }
+  return flag;
 }
 
 const addSymbol = async (ctx) => {
   let msg = ctx.update.message
   let cmd = msg.text.split(' ')
-  let sym = cmd[1].toUpperCase()+'USDT'
+  let sym = cmd[1].toUpperCase()
   let opr = cmd[2]
   let prc = parseFloat(cmd[3])
 
   let treshold = await getTreshold()
 
   if (treshold[sym] == undefined) treshold[sym] = []
-  treshold[sym].push({prc, opr, user:msg.chat.id})
+
+  let newTreshold = {prc, opr, user:msg.chat.id}
+
+  if (verifyTreshold(sym, newTreshold)) {
+    treshold[sym].push(newTreshold)
+  }
+  else if (verifyTreshold(sym+'USDT', newTreshold)) {
+    treshold[sym+'USDT'].push(newTreshold)
+  }
+  else if (verifyTreshold(sym+'BUSD', newTreshold)) {
+    treshold[sym+'BUSD'].push(newTreshold)
+  }
+  else {
+    ctx.reply("I don't Understand", { parse_mode: 'Markdown' })
+  }
 
   await updateTreshold(treshold)
   console.log(treshold)
@@ -78,7 +99,7 @@ const addSymbol = async (ctx) => {
 
 module.exports = {
   main: (bot) => {
-    onMessage(bot);
+    useWebsocket(bot)
     bot.command('alert', async (ctx) => addSymbol(ctx))
   }
 }
