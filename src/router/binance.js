@@ -58,6 +58,7 @@ const useWebsocket = (bot) => {
 }
 
 const verifyTreshold = (symbol, newTreshold) => {
+  console.log("testing ", symbol)
   let {prc, opr, user} = newTreshold
   if (prc == NaN || prc == null || opr == null || opr == NaN) return false;
   let flag = false;
@@ -70,15 +71,16 @@ const verifyTreshold = (symbol, newTreshold) => {
 const addSymbol = async (ctx) => {
   let msg = ctx.update.message
   let cmd = msg.text.split(' ')
-  let sym = cmd[1].toUpperCase()
-  let opr = cmd[2]
-  let prc = parseFloat(cmd[3])
+  let sym = cmd[0].toUpperCase()
+  let opr = cmd[1]
+  let prc = parseFloat(cmd[2])
 
   let treshold = await getTreshold()
 
   if (treshold[sym] == undefined) treshold[sym] = []
 
   let newTreshold = {prc, opr, user:msg.chat.id}
+
 
   if (verifyTreshold(sym, newTreshold)) {
     treshold[sym].push(newTreshold)
@@ -100,6 +102,6 @@ const addSymbol = async (ctx) => {
 module.exports = {
   main: (bot) => {
     useWebsocket(bot)
-    bot.command('alert', async (ctx) => addSymbol(ctx))
+    bot.on('text', async (ctx) => addSymbol(ctx))
   }
 }
