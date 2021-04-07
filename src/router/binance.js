@@ -77,21 +77,19 @@ const addSymbol = async (ctx) => {
 
   let treshold = await getTreshold()
 
-  if (treshold[sym] == undefined) treshold[sym] = []
-
   let newTreshold = {prc, opr, user:msg.chat.id}
 
-
-  if (verifyTreshold(sym, newTreshold)) {
-    treshold[sym].push(newTreshold)
+  let added = false
+  for (let suffix of ['', 'USDT', 'BUSD']) {
+    let pair = sym+suffix
+    if (verifyTreshold(pair, newTreshold)) {
+      if (treshold[pair] == undefined) treshold[pair] = []
+      treshold[pair].push(newTreshold)
+      added = true;
+      break;
+    }
   }
-  else if (verifyTreshold(sym+'USDT', newTreshold)) {
-    treshold[sym+'USDT'].push(newTreshold)
-  }
-  else if (verifyTreshold(sym+'BUSD', newTreshold)) {
-    treshold[sym+'BUSD'].push(newTreshold)
-  }
-  else {
+  if (!added) {
     ctx.reply("I don't Understand", { parse_mode: 'Markdown' })
   }
 
