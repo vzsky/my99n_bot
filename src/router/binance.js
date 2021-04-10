@@ -82,7 +82,7 @@ const addSymbol = async (ctx) => {
   let sym = cmd[0].toUpperCase()
   let opr = cmd[1]
   let prc = parseFloat(cmd[2])
-  if (cmd[2][cmd[2].length - 1].toUpperCase() == 'B') {
+  if (cmd[2] != undefined && cmd[2][cmd[2].length - 1].toUpperCase() == 'B') {
     let BathPerDollar = getBathPerDollar()
     prc /= BathPerDollar
     opr += 'b'
