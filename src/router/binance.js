@@ -37,7 +37,7 @@ const useWebsocket = (bot) => {
           if (price[symbol] < tres.prc) {
             let displayPrice = parseFloat(price[symbol])
             if (tres.opr[1] == 'b') displayPrice = displayPrice*getBathPerDollar() + " THB"
-            bot.telegram.sendMessage(tres.user, `${symbol} @ ${displayPrice}`)
+            bot.telegram.sendMessage(tres.user, `${symbol} below ${displayPrice}`)
             treshold[symbol].splice(index, 1);
 
             await updateTreshold(treshold)
@@ -47,7 +47,7 @@ const useWebsocket = (bot) => {
           if (price[symbol] > tres.prc) {
             let displayPrice = parseFloat(price[symbol])
             if (tres.opr[1] == 'b') displayPrice = displayPrice*getBathPerDollar() + " THB"
-            bot.telegram.sendMessage(tres.user, `${symbol} @ ${displayPrice}`)
+            bot.telegram.sendMessage(tres.user, `${symbol} above ${displayPrice} `)
             treshold[symbol].splice(index, 1);
 
             await updateTreshold(treshold)
